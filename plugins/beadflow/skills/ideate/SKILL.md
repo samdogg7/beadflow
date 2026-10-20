@@ -1,0 +1,168 @@
+---
+name: ideate
+description: Shapes a rough feature idea into a beads epic with child tasks through a short design interview. Use before any code is written for a new feature or system in a project tracked with bd.
+disable-model-invocation: true
+argument-hint: [rough feature idea]
+---
+
+# Ideate
+
+Turn a rough feature idea into a reviewed beads epic with child tasks. This is a
+design conversation first and a filing step second. You never implement anything.
+
+Seed idea: $ARGUMENTS
+
+If the seed idea is empty, ask what the user wants to build and stop there.
+
+If the seed is a bead ID, it's a stub epic filed from the roadmap. Run
+`bd show <id>`, read the design file it links, and run the interview on that
+scope. In step 5, fill that epic (update its description to the confirmed
+design summary and drop its `needs-ideation` label) instead of creating a new
+one, and file the children under it. If the stub's ID is a hash suffix
+(`proj-3na.4`) and it has no children yet, rename it to a readable slug
+first (`bd rename <id> <prefix>-<slug>`); rename carries dependencies and
+references but not children, so it's only safe before any are filed.
+
+## Standing rules
+
+These hold for the whole conversation, including after the epic is filed.
+
+- **Read-only on the project**, except design docs in step 6 and the commit
+  in step 7. Don't create, edit, or delete any other project file. Another
+  agent may be working in this repo at the same time.
+- **bd is the only thing you change**, and only after the user approves the
+  breakdown in chat. Searching and listing beads is fine at any point.
+- **Don't run `bd prime` if beads context is already in the session.** Hooks
+  usually inject it. Run it only if you can't see bd workflow context.
+- **Don't assume bd flags.** Run `bd create --help` and `bd dep --help` before
+  filing. Flag names and supported issue types vary between bd versions.
+- **Ask one question at a time.** The user is often on a phone, and two
+  questions get one answered and one forgotten. Each question should force a
+  choice and carry your default, so a one-word reply moves things on. Push back
+  on vague or contradictory answers, and say so when an answer conflicts with an
+  existing bead.
+- **Read the design doc, not the codebase.** If the project keeps design docs
+  (CLAUDE.md says where), read the file for the system in question before the
+  first question, and the decisions log if there is one. Don't skim code up
+  front. Read a specific file only when a question depends on what already
+  exists, such as whether a save system or a relevant autoload is in place.
+  Check the project's own config files for what exists rather than asking
+  the user.
+
+## Flow
+
+### 1. Check for overlap
+
+Search open beads for anything related to the idea (`bd search`, `bd list
+--status=open`). Mention matches in a line or two each: duplicate, dependency,
+or conflict. Don't dwell on unrelated ones.
+
+When the seed is a stub, also read its siblings under the same parent. The
+most useful thing the interview can settle is where this epic stops and the
+next one starts; put that line in the summary so neither epic builds the
+other's half.
+
+### 2. Interview
+
+Scale depth to the idea. A small tweak gets two or three questions; a new system
+gets the full pass. The checklist is in `references/interview.md`. Read it before
+your first question. Some areas always apply; others have a "Skip when" test.
+
+Prefer questions that force a choice ("Does dying drop the loot, or keep it?")
+over open ones ("Any thoughts on death?"). When the user says "whatever's
+standard", propose a concrete default and ask them to confirm it.
+
+### 3. Confirm the design
+
+Summarize the design in a few short paragraphs: what the player experiences, how
+it works in the project's terms (which layer, which module), what's out of scope, and which decisions are still open.
+If you skipped persistence, say "No save data" in one line so the user can catch
+a wrong assumption.
+
+Get explicit agreement before breaking it down. This summary becomes the epic
+description, so write it for a coding agent who has never seen this
+conversation.
+
+### 4. Propose the breakdown
+
+Post an editable list in chat: the epic, then each child task with
+
+- title, type, priority
+- one-line why
+- acceptance criteria
+- dependencies (by list position, since nothing has an ID yet)
+
+Mark spikes (questions to answer, not code to write) and playtest or tuning tasks
+clearly. See `references/example-epic.md` for the shape. Revise until the user
+approves. "Looks good" counts; silence or a new question doesn't.
+
+### 5. File it
+
+1. Check `bd create --help` and `bd dep --help`.
+2. Create the epic, or update the stub, so its description is the confirmed
+   design summary. A new epic gets a readable ID: `--id <prefix>-<slug>` with
+   a two- or three-word slug (`proj-stamina-sprint`), if bd supports
+   `--id`. Children then auto-number under it (`proj-stamina-sprint.1`), which
+   reads better in commit trailers and `bd ready` than a hash suffix. Renaming
+   later doesn't carry children, so pick the slug at creation.
+3. Create each child with the epic as parent. Put acceptance criteria in the
+   acceptance field if bd has one (`--acceptance`), not in the description, so
+   `bd show` and validation can find them.
+4. Add dependencies between children to set the order.
+5. Show the created IDs mapped to titles, then run `bd ready`.
+
+Pass multi-line descriptions through stdin or a temp file outside the project
+(for example from `mktemp`), not as long inline strings. Inline strings break on
+quotes and newlines, and a temp file inside the repo would violate the read-only
+rule.
+
+If a command fails partway, stop and report what was created so far. Don't retry
+blindly; a retry can file duplicates.
+
+### 6. Update the design docs
+
+Skip this step if the project has no design docs.
+
+The interview usually settles something the docs left open: a default
+overturned, an open question answered, a contract between systems pinned down.
+If that lands only in a bead, the doc is wrong the moment the bead closes.
+Propose the edits as a diff: a decision with its reasoning added to the
+decisions log, an open question removed, a status line changed. Follow the
+log's own conventions (the design docs README describes them). Be sparing: a
+decision earns a line only if an agent with the docs and the code in front of
+them might still do it differently. A contract the code makes obvious, or a
+detail the bead's acceptance criteria already pin down, is not a decision.
+A decision usually fits one line; give it a detail file only when the
+interview weighed alternatives or produced evidence that a future agent would
+otherwise re-argue.
+Apply the edits only after the user approves, and only inside the design docs
+directory. Don't rewrite the design to match the epic; the epic already links
+to the doc.
+
+### 7. Commit
+
+Once the docs are applied (or skipped), commit the design docs and the beads
+export together, trailer `Bead: <epic-id>`, subject "Ideate the <name> epic".
+Don't push. This is the one git write the skill makes; approving the
+breakdown is the authority for it, so don't ask again.
+
+## Writing the beads
+
+- **One task, one focused agent session.** Each should produce a diff someone
+  can review in one sitting. Split anything bigger.
+- **Checkable acceptance criteria.** Use automated checks where they exist: a
+  test passes, a scene runs without errors or warnings. For feel and visuals,
+  write a concrete manual playtest check ("Jump from the lowest ledge in
+  `test_level.tscn` and land on the second platform without a run-up").
+- **Stable identifiers only.** Name scenes, nodes, signals, autoloads, Resource
+  types, and existing `res://` paths. No line numbers; they rot.
+- **Behavior and contracts, not steps.** Say what the code must do and expose,
+  not how to write it. The epic may wait weeks before anyone picks it up, and the
+  code underneath will have moved.
+- **Short, specific titles.** "Add stamina drain to sprint", not "Implement the
+  feature".
+- **The epic stands alone.** A coding agent reading only the epic must understand
+  the feature, including what's out of scope and which decisions are open.
+- **Link the design doc, don't repeat it.** Name the file and say what this
+  epic builds from it. Repeated design text costs tokens on every read and goes
+  stale when the doc changes.

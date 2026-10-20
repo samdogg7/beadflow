@@ -1,0 +1,7 @@
+{
+  "name": "samdogg7",
+  "owner": { "name": "samdogg7" },
+  "plugins": [
+    { "name": "beadflow", "source": "./plugins/beadflow", "description": "next / ideate / build loop on beads" }
+  ]
+}
