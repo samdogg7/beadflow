@@ -19,16 +19,19 @@ first `bd list --label=needs-ideation --status=open` stub that `bd ready` also
 lists. Claim it with `bd update <id> --claim` before reading anything else.
 Another session may be building or ideating in this repo, and the claim moves
 the stub out of `--status=open`, so no other picker takes it. If the claim
-fails, someone else got there first; try the next ready stub. Name the stub
-in one line (ID, title, design file), then continue with its ID as the seed.
+fails, someone else got there first; try the next ready stub. Then continue
+with its ID as the seed.
 If no stub is ready, list the open stubs with what blocks each one and stop.
 Don't ideate a blocked stub: its design rests on work that hasn't landed.
 
 If the seed is a bead ID, it's a stub epic filed from the roadmap. Run
 `bd show <id>`, read the design file it links, and run the interview on that
-scope. In step 5, fill that epic (update its description to the confirmed
-design summary and drop its `needs-ideation` label) instead of creating a new
-one, and file the children under it. If the stub's ID is a hash suffix
+scope. Before step 1, tell the user what they're designing: the epic's title
+and ID, then one or two plain sentences on what it builds, drawn from the
+stub and the design file. The user may have picked it with `next` and not
+know which stub came up. In step 5, fill that epic (update its description
+to the confirmed design summary and drop its `needs-ideation` label) instead
+of creating a new one, and file the children under it. If the stub's ID is a hash suffix
 (`proj-3na.4`) and it has no children yet, rename it to a readable slug
 first (`bd rename <id> <prefix>-<slug>`); rename carries dependencies and
 references but not children, so it's only safe before any are filed.
