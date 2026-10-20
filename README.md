@@ -75,3 +75,14 @@ written. After that, `/beadflow:next`.
 - Design docs in `docs/design/` with a status line per file and a numbered
   `decisions.md`.
 - A Build & Test section in `CLAUDE.md` with exact commands.
+
+## Metrics
+
+```
+scripts/metrics.py [--repo PATH] [--since YYYY-MM-DD]
+```
+
+Prints token usage per Claude Code session and subagent, by model, with the
+beads whose `Bead:` commits landed during each. It reads the transcripts in
+`~/.claude/projects`, so it needs no setup. A coordinator session that landed
+several beads lists them all; its tokens aren't split between them.
