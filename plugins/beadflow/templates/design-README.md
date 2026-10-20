@@ -76,15 +76,16 @@ line; the index is also the history.
 docs/design/<system>.md
         │  /ideate <idea>     reads the file, interviews, files an epic
         ▼
-epic + child tasks in bd  ──▶  coding agents
-        │
+epic + child tasks in bd
+        │  /build              implements each task, notes calls made on the way
         ▼
 decisions.md updated       (defaults overturned, open questions answered)
 ```
 
-`/ideate` is the only path from a doc to an epic, and it's also how docs get
-updated: a design conversation that settles a question edits `decisions.md`
-with the user's approval.
+`/ideate` is the only path from a doc to an epic. Both skills update
+`decisions.md`, always with the user's approval: `/ideate` with what the
+interview settled, `/build` at the end of a run with the design calls its
+tasks had to make.
 
 Epics get readable IDs (`bd create --id <prefix>-<slug>`), and children
 auto-number under them. Roadmap stubs filed by hand follow the same rule;

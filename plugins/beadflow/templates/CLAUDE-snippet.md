@@ -1,17 +1,21 @@
 ## Decisions you can't make
 
 When a task needs a design decision the docs and the bead don't settle, don't
-guess. File the question as a bead with the `human` label, block the task on
-it, and move to other work:
+guess. File the question as a bead with the `human` label:
 
 ```bash
 bd create --title="Decision: <the question>" --labels=human --type=decision \
   -d "<context, the options, and what you'd pick if forced>"
-bd dep add <task-id> <question-id>
 ```
 
+If the task can't be done right without the answer, block it and move to
+other work: `bd dep add <task-id> <question-id>`. If the task can land with
+your pick and the user can overturn it later, add no dependency and say in
+the description what the code does now.
+
 The user reviews these with `/beadflow:next` (`bd human list`), often from a
-phone, and answers with `bd human respond`.
+phone, and answers with `bd human respond`. `next` stops for a question only
+when it blocks a task.
 
 ## Commits
 

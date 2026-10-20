@@ -40,6 +40,7 @@ in step 3 (below, for reference only; don't repost it at step 4).
        `StaminaConfig` Resource.
      - A test in the project's test framework covers drain, regen after delay,
        and the recovery threshold.
+   - Shares: `StaminaConfig` resource (with 4)
    - Depends on: none
 
 2. **Gate sprint on stamina in the player controller** · task · P2
@@ -62,6 +63,7 @@ in step 3 (below, for reference only; don't repost it at step 4).
        manages stamina, and can't be by one who holds sprint the whole time.
      - Final values committed to the `StaminaConfig` resource file.
      - Decision recorded on whether the HUD bar hides when full.
+   - Shares: `StaminaConfig` resource (with 1)
    - Depends on: 2, 3
 
 ## Spike example

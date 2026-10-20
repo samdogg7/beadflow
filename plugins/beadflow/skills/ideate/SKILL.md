@@ -55,7 +55,8 @@ These hold for the whole conversation, including after the epic is filed.
 
 Search open beads for anything related to the idea (`bd search`, `bd list
 --status=open`). Mention matches in a line or two each: duplicate, dependency,
-or conflict. Don't dwell on unrelated ones.
+or conflict. Don't dwell on unrelated ones. Then list, in one line, the
+interview areas that apply, so the user can see how long it will run.
 
 When the seed is a stub, also read its siblings under the same parent. The
 most useful thing the interview can settle is where this epic stops and the
@@ -67,6 +68,11 @@ other's half.
 Scale depth to the idea. A small tweak gets two or three questions; a new system
 gets the full pass. The checklist is in `references/interview.md`. Read it before
 your first question. Some areas always apply; others have a "Skip when" test.
+
+Before the first question, check the design doc's premises against the
+milestone being built. A premise that rests on something a later milestone
+adds (density stored per cell when cells come later) makes questions on it
+hard to answer. Name the gap in the question that depends on it.
 
 Prefer questions that force a choice ("Does dying drop the loot, or keep it?")
 over open ones ("Any thoughts on death?"). When the user says "whatever's
@@ -99,7 +105,13 @@ each child task with
   purpose obvious (spikes, tasks other tasks wait on). Build doesn't pass it
   to the implementer.
 - acceptance criteria
+- shared files it touches that another task also touches (a tuning file, a
+  definitions file, golden test output)
 - dependencies (by list position, since nothing has an ID yet)
+
+Tasks that share a file can't be built in parallel, so give them a
+dependency in the order they should land. When that makes tasks run one at a
+time, say so in one line under the list, naming the shared file.
 
 Mark spikes (questions to answer, not code to write) and playtest or tuning tasks
 clearly. See `references/example-epic.md` for the shape. Revise until the user

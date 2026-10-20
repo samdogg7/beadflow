@@ -1,7 +1,7 @@
 # beadflow
 
 A design-to-code loop for projects that track work in [beads](https://github.com/gastownhall/beads)
-(`bd`). Three skills, one coordinator, fresh implementers.
+(`bd`). Four skills, one coordinator, fresh implementers.
 
 ```
 /beadflow:setup     once: Build & Test commands, design doc split, roadmap stubs
@@ -13,7 +13,7 @@ A design-to-code loop for projects that track work in [beads](https://github.com
 /beadflow:ideate    interview → confirmed design → epic + child tasks in bd → decisions log
       │
       ▼
-/beadflow:build     per bead: claim → fresh implementer in a worktree → verify → review → land → close
+/beadflow:build     per bead: claim → fresh implementer in a worktree → verify → review → record decisions → close and land
 ```
 
 ## Why this shape
@@ -31,15 +31,19 @@ A design-to-code loop for projects that track work in [beads](https://github.com
 - **Seam or not.** Work other code builds against gets a stronger model and a
   code review; everything else gets a cheaper model with tests as the review.
   Judged per bead by property, not by a list.
-- **Humans decide.** An implementer that hits a design question files a
-  `human`-labelled bead and moves on. `/next` surfaces them first.
+- **Humans decide.** A design question goes into a `human`-labelled bead. It
+  blocks a task only when the task can't be done right without the answer.
+  `/next` lists every question but stops only for one that blocks work.
+- **Docs keep up with the build.** Design calls made during `/build` are
+  proposed as `decisions.md` lines at the end of a run. Review findings that
+  recur become one-line rules in `CLAUDE.md` that every brief carries.
 
 ## Prerequisites
 
 - [Claude Code](https://code.claude.com/docs) on your PATH as `claude`.
 - [beads](https://github.com/gastownhall/beads#readme) on your PATH as `bd`.
-  The skills drive it for every bit of task tracking; install it and run
-  `bd init --prefix <short-prefix>` in the project first.
+  The skills drive it for every bit of task tracking. `install.sh` runs
+  `bd init` for you.
 
 ## Install
 
@@ -71,10 +75,14 @@ written. After that, `/beadflow:next`.
 
 - `bd` with `human`-labelled decision beads, `needs-ideation` on stubs,
   `--acceptance` on tasks, readable epic IDs via `--id`.
-- Commits carry `Bead: <id>`, one bead per commit.
+- Commits carry `Bead: <id>`, one bead per commit. The commit also carries
+  the closed bead in `.beads/issues.jsonl`, and the epic's notes get a line
+  per bead landed.
 - Design docs in `docs/design/` with a status line per file and a numbered
   `decisions.md`.
-- A Build & Test section in `CLAUDE.md` with exact commands.
+- A Build & Test section in `CLAUDE.md` with exact commands, and a
+  Conventions & Patterns section that `/build` fills from repeated review
+  findings.
 
 ## Metrics
 
