@@ -4,6 +4,9 @@ A design-to-code loop for projects that track work in [beads](https://github.com
 (`bd`). Three skills, one coordinator, fresh implementers.
 
 ```
+/beadflow:setup     once: Build & Test commands, design doc split, roadmap stubs
+      │
+      ▼
 /beadflow:next      what's waiting on you, next stub to ideate, ready to build, in progress
       │
       ▼
@@ -40,35 +43,29 @@ A design-to-code loop for projects that track work in [beads](https://github.com
 
 ## Install
 
-From the project's root:
+Clone this repo, then from anywhere:
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/samdogg7/beadflow/main/install.sh)
+/path/to/beadflow/install.sh /path/to/project [bd-prefix]
 ```
-
-Or from a clone: `/path/to/beadflow/install.sh [project-dir]`.
 
 The script registers the marketplace, installs the plugin at project scope
 (so `.claude/settings.json` carries it for anyone who clones the project),
-appends the beadflow sections to `CLAUDE.md`, and seeds `docs/design/` with
-the README and an empty `decisions.md`. It never overwrites a file that
-exists; re-running is safe.
+runs `bd init` if the project has no `.beads` folder, appends the beadflow
+sections to `CLAUDE.md`, and seeds `docs/design/` with the README and an
+empty `decisions.md`. It never overwrites a file that exists; re-running is
+safe.
 
-Afterwards:
+Then open Claude Code in the project and run:
 
-1. Fill in the Build & Test commands in `CLAUDE.md`.
-2. Write one `docs/design/<system>.md` per system, each with a status line.
-3. File roadmap stubs as epics with readable IDs
-   (`bd create --id <prefix>-<slug> --type=epic --labels=needs-ideation`).
-
-Run `/beadflow:next`.
-
-By hand, the install is two commands:
-
-```bash
-claude plugin marketplace add samdogg7/beadflow   # or a local clone's path
-claude plugin install beadflow@samdogg7 --scope project
 ```
+/beadflow:setup [path or URL of an existing design doc]
+```
+
+It proposes the Build & Test commands from what the repo contains, splits
+your design document into `docs/design/<system>.md` files, files the first
+rung of roadmap stubs as epics, and commits. Each step is shown before it's
+written. After that, `/beadflow:next`.
 
 ## Conventions the skills rely on
 

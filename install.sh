@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 # Installs the beadflow plugin into one project and seeds its conventions.
+# Run from a clone of this repo:
 #
-#   cd /path/to/project
-#   bash <(curl -fsSL https://raw.githubusercontent.com/samdogg7/beadflow/main/install.sh)
+#   /path/to/beadflow/install.sh [project-dir] [bd-prefix]
 #
-# or, from a clone:  /path/to/beadflow/install.sh [project-dir]
-#
-# Idempotent: re-running updates nothing that already exists.
+# Idempotent: re-running changes nothing that already exists. Afterwards, run
+# /beadflow:setup in Claude Code to fill in Build & Test, split a design doc
+# into docs/design/, and file roadmap stubs.
 set -euo pipefail
 
 MARKETPLACE="samdogg7"
 PLUGIN="beadflow"
-RAW="https://raw.githubusercontent.com/samdogg7/beadflow/main"
 PROJECT="${1:-$PWD}"
+PREFIX="${2:-$(basename "$PROJECT" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9\n' '-')}"
 
 say()  { printf '%s\n' "$*"; }
 fail() { printf 'install: %s\n' "$*" >&2; exit 1; }
@@ -22,26 +22,16 @@ command -v bd >/dev/null || fail "bd (beads) is not installed. See https://githu
 command -v git >/dev/null || fail "git is not on PATH"
 [ -d "$PROJECT/.git" ] || fail "$PROJECT is not a git repository; the plugin installs at project scope"
 
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+[ -f "$HERE/.claude-plugin/marketplace.json" ] || fail "run this script from a clone of the beadflow repo"
+
 cd "$PROJECT"
 
-# Templates: next to this script when run from a clone, else fetched from GitHub.
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || true)"
-template() {
-  local name="$1"
-  if [ -n "$HERE" ] && [ -f "$HERE/plugins/$PLUGIN/templates/$name" ]; then
-    cat "$HERE/plugins/$PLUGIN/templates/$name"
-  else
-    curl -fsSL "$RAW/plugins/$PLUGIN/templates/$name"
-  fi
-}
+template() { cat "$HERE/plugins/$PLUGIN/templates/$1"; }
 
 # 1. Marketplace and plugin.
 if ! claude plugin marketplace list 2>/dev/null | grep -q "$MARKETPLACE"; then
-  if [ -n "$HERE" ] && [ -f "$HERE/.claude-plugin/marketplace.json" ]; then
-    claude plugin marketplace add "$HERE"
-  else
-    claude plugin marketplace add "samdogg7/$PLUGIN"
-  fi
+  claude plugin marketplace add "$HERE"
 fi
 claude plugin install "$PLUGIN@$MARKETPLACE" --scope project
 say "plugin: $PLUGIN@$MARKETPLACE enabled in .claude/settings.json"
@@ -50,7 +40,8 @@ say "plugin: $PLUGIN@$MARKETPLACE enabled in .claude/settings.json"
 if [ -d .beads ]; then
   say "beads: .beads exists"
 else
-  say "beads: no .beads folder. Run: bd init --prefix <short-project-prefix>"
+  bd init --prefix "$PREFIX"
+  say "beads: initialised with prefix '$PREFIX' (pass a second argument to choose another)"
 fi
 
 # 3. CLAUDE.md conventions.
@@ -88,6 +79,4 @@ MD
 fi
 
 say ""
-say "Done. Next: write one docs/design/<system>.md per system, file roadmap stubs as"
-say "epics (bd create --id <prefix>-<slug> --type=epic --labels=needs-ideation),"
-say "then run /beadflow:next in Claude Code."
+say "Done. Open Claude Code in $PROJECT and run /beadflow:setup."
