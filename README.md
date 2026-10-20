@@ -7,7 +7,7 @@ A design-to-code loop for projects that track work in [beads](https://github.com
 /beadflow:setup     once: Build & Test commands, design doc split, roadmap stubs
       │
       ▼
-/beadflow:next      what's waiting on you, next stub to ideate, ready to build, in progress
+/beadflow:next      what's waiting on you, then straight into build or ideate (`show` to only report)
       │
       ▼
 /beadflow:ideate    interview → confirmed design → epic + child tasks in bd → decisions log
