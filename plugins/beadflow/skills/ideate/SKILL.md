@@ -90,10 +90,14 @@ exist in step 5.
 
 ### 4. Propose the breakdown
 
-Post an editable list in chat: the epic, then each child task with
+Post an editable list in chat: the epic as one line (title, type, priority;
+its description is the summary confirmed in step 3, so don't repeat it), then
+each child task with
 
 - title, type, priority
-- one-line why
+- one-line why, only when the title and acceptance criteria don't make the
+  purpose obvious (spikes, tasks other tasks wait on). Build doesn't pass it
+  to the implementer.
 - acceptance criteria
 - dependencies (by list position, since nothing has an ID yet)
 
