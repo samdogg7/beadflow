@@ -83,6 +83,11 @@ Get explicit agreement before breaking it down. This summary becomes the epic
 description, so write it for a coding agent who has never seen this
 conversation.
 
+If the seed was a stub with a readable slug and the interview moved its scope
+so the slug no longer fits, propose a new slug in the same message and rename
+on approval (`bd rename <id> <prefix>-<slug>`). Do it here, before any children
+exist in step 5.
+
 ### 4. Propose the breakdown
 
 Post an editable list in chat: the epic, then each child task with
@@ -104,7 +109,7 @@ approves. "Looks good" counts; silence or a new question doesn't.
    a two- or three-word slug (`proj-stamina-sprint`), if bd supports
    `--id`. Children then auto-number under it (`proj-stamina-sprint.1`), which
    reads better in commit trailers and `bd ready` than a hash suffix. Renaming
-   later doesn't carry children, so pick the slug at creation.
+   later doesn't carry children, so settle the slug before this step.
 3. Create each child with the epic as parent. Put acceptance criteria in the
    acceptance field if bd has one (`--acceptance`), not in the description, so
    `bd show` and validation can find them.

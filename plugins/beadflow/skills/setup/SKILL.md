@@ -48,19 +48,19 @@ author's words; don't rewrite. Each file starts with
 `Status: design, not built.` Pull anything phrased as a settled decision
 with a reason into `decisions.md` as numbered lines dated today, and
 anything phrased as a question into its open-questions list. Add a
-`roadmap.md` if the document has a scope ladder or milestone list. Show the
+`roadmap.md` if the document has a list of milestones. Show the
 file index for the README's table. Write after approval.
 
 ## 3. Roadmap stubs
 
 Skip if any open epic carries the `needs-ideation` label.
 
-From `roadmap.md` (or the interview), propose the first rung's epics: a
+From `roadmap.md` (or the interview), propose the first milestone's epics: a
 two- or three-word slug, a title, and the design file each builds from.
-Rungs beyond the next stay as lines in `roadmap.md`. After approval, file
+Milestones beyond the next stay as lines in `roadmap.md`. After approval, file
 each as `bd create --id <prefix>-<slug> --type=epic --labels=needs-ideation`
-with a one-line description naming the design file, and a rung epic as the
-parent if the ladder has rungs. Add dependencies between stubs only where
+with a one-line description naming the design file, and a milestone epic as the
+parent if the roadmap has milestones. Add dependencies between stubs only where
 one plainly can't start before another.
 
 ## 4. Commit

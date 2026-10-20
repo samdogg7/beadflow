@@ -19,7 +19,7 @@ A design-to-code loop for projects that track work in [beads](https://github.com
 ## Why this shape
 
 - **Docs hold the why, beads hold the what.** A design doc per system plus a
-  numbered, append-only `decisions.md`. Beads carry tasks for the next rung
+  numbered, append-only `decisions.md`. Beads carry tasks for the next milestone
   or two with checkable acceptance criteria. `templates/design-README.md` is
   the convention.
 - **One question at a time.** `/ideate` interviews with a default on every
@@ -64,7 +64,7 @@ Then open Claude Code in the project and run:
 
 It proposes the Build & Test commands from what the repo contains, splits
 your design document into `docs/design/<system>.md` files, files the first
-rung of roadmap stubs as epics, and commits. Each step is shown before it's
+milestone's roadmap stubs as epics, and commits. Each step is shown before it's
 written. After that, `/beadflow:next`.
 
 ## Conventions the skills rely on

@@ -7,7 +7,7 @@ next. Keep each where it belongs, or both go stale.
 
 | | Design docs | Beads |
 | --- | --- | --- |
-| Hold | Pillars, contracts between systems, decisions and their reasoning | Tasks for the next rung or two, acceptance criteria |
+| Hold | Pillars, contracts between systems, decisions and their reasoning | Tasks for the next milestone or two, acceptance criteria |
 | Change | Slowly, when a decision changes | Daily; closed beads disappear from view |
 | Cost | Read once per task, 500 to 1,500 tokens per file | Paid every time an agent runs `bd show` or `bd search` |
 
@@ -16,8 +16,17 @@ as the doc changes. A bead should link to the file and say what's different:
 "see `people.md`; this epic builds skills and mood only".
 
 Beads for work years out go stale as fast as docs do. File epics for the
-current rung and the next one. Later rungs stay one-line entries in
+current milestone and the next one. Later milestones stay one-line entries in
 `roadmap.md`.
+
+```
+roadmap.md              beads
+──────────────────      ─────────────────────────────
+M1 Core loop      ───►  epic  (tasks filed, in progress)
+M2 Villagers      ───►  epic  (stub, needs-ideation)
+M3 Trading              one line only
+M4 Seasons              one line only
+```
 
 ## Keeping docs honest
 
@@ -93,5 +102,5 @@ auto-number under them. Roadmap stubs filed by hand follow the same rule;
 | `factions.md` | AI settlements and inherited settlements |
 | `presentation.md` | Camera, art, UI readability |
 | `architecture.md` | Foundational commitments: sim library, determinism, components |
-| `roadmap.md` | Scope ladder: the rungs and their order |
+| `roadmap.md` | Ordered milestones |
 | `decisions.md` | Open questions, defaults taken, decisions and why |
