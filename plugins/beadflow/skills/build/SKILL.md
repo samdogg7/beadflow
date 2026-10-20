@@ -109,8 +109,8 @@ Report in exactly this shape, nothing else:
 
 Don't trust the report. In the worktree:
 
-- run the build and test commands from CLAUDE.md yourself; paste the result,
-  not a summary
+- run the build and test commands from CLAUDE.md yourself; paste the final
+  pass/fail line and any failing lines, not the full log
 - `git diff --stat`, then read only the files an acceptance line depends on
 - check each acceptance criterion against what you ran, not what the report
   said
