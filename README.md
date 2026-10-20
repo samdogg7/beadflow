@@ -34,7 +34,7 @@ A design-to-code loop for projects that track work in [beads](https://github.com
 ## Install
 
 ```bash
-claude plugin marketplace add /path/to/beadflow
+claude plugin marketplace add samdogg7/beadflow   # or a local clone's path
 claude plugin install beadflow@samdogg7 --scope project
 ```
 
