@@ -201,7 +201,9 @@ user before the next child.
 When the run ends, collect the `proposed:` lines from the epic's notes that
 `docs/design/decisions.md` doesn't hold yet, and show them as a diff to it,
 following its README. Apply and commit them on approval, subject "Record
-decisions from <epic>".
+decisions from <epic>". Re-read the log just before writing and renumber
+your entries if it gained any since you proposed them; `/ideate` appends to
+the same log and may have landed lines during the run.
 
 ## Fan-out
 

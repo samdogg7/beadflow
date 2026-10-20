@@ -1,8 +1,8 @@
 ---
 name: ideate
-description: Shapes a rough feature idea into a beads epic with child tasks through a short design interview. Use before any code is written for a new feature or system in a project tracked with bd.
+description: Shapes a rough feature idea, or with "next" the next ready roadmap stub, into a beads epic with child tasks through a short design interview. Use before any code is written for a new feature or system in a project tracked with bd.
 disable-model-invocation: true
-argument-hint: [rough feature idea]
+argument-hint: [rough feature idea | bead-id | next]
 ---
 
 # Ideate
@@ -13,6 +13,16 @@ design conversation first and a filing step second. You never implement anything
 Seed idea: $ARGUMENTS
 
 If the seed idea is empty, ask what the user wants to build and stop there.
+
+If the seed is `next`, pick the stub the same way `/beadflow:next` does: the
+first `bd list --label=needs-ideation --status=open` stub that `bd ready` also
+lists. Claim it with `bd update <id> --claim` before reading anything else.
+Another session may be building or ideating in this repo, and the claim moves
+the stub out of `--status=open`, so no other picker takes it. If the claim
+fails, someone else got there first; try the next ready stub. Name the stub
+in one line (ID, title, design file), then continue with its ID as the seed.
+If no stub is ready, list the open stubs with what blocks each one and stop.
+Don't ideate a blocked stub: its design rests on work that hasn't landed.
 
 If the seed is a bead ID, it's a stub epic filed from the roadmap. Run
 `bd show <id>`, read the design file it links, and run the interview on that
@@ -31,7 +41,10 @@ These hold for the whole conversation, including after the epic is filed.
   in step 7. Don't create, edit, or delete any other project file. Another
   agent may be working in this repo at the same time.
 - **bd is the only thing you change**, and only after the user approves the
-  breakdown in chat. Searching and listing beads is fine at any point.
+  breakdown in chat. Searching and listing beads is fine at any point. The
+  one exception is the claim on a stub picked by `next`. If the user drops
+  the interview, release it (`bd update <id> --status=open` with the assignee
+  cleared) so the stub is pickable again.
 - **Don't run `bd prime` if beads context is already in the session.** Hooks
   usually inject it. Run it only if you can't see bd workflow context.
 - **Don't assume bd flags.** Run `bd create --help` and `bd dep --help` before
@@ -130,7 +143,10 @@ approves. "Looks good" counts; silence or a new question doesn't.
    acceptance field if bd has one (`--acceptance`), not in the description, so
    `bd show` and validation can find them.
 4. Add dependencies between children to set the order.
-5. Show the created IDs mapped to titles, then run `bd ready`.
+5. If the stub was claimed by `next`, set it back to `open` and clear the
+   assignee. It's an epic now, not work in progress, and `/beadflow:next`
+   would otherwise list it as in progress until it closes.
+6. Show the created IDs mapped to titles, then run `bd ready`.
 
 Pass multi-line descriptions through stdin or a temp file outside the project
 (for example from `mktemp`), not as long inline strings. Inline strings break on
@@ -157,13 +173,18 @@ A decision usually fits one line; give it a detail file only when the
 interview weighed alternatives or produced evidence that a future agent would
 otherwise re-argue.
 Apply the edits only after the user approves, and only inside the design docs
-directory. Don't rewrite the design to match the epic; the epic already links
-to the doc.
+directory. Re-read the decisions log just before writing and renumber your
+entries if it gained any since you proposed them; `/build` appends to the
+same log and may have landed lines during the interview. Don't rewrite the
+design to match the epic; the epic already links to the doc.
 
 ### 7. Commit
 
 Once the docs are applied (or skipped), commit the design docs and the beads
 export together, trailer `Bead: <epic-id>`, subject "Ideate the <name> epic".
+Stage those paths by name (`git add <design-docs-dir> .beads/issues.jsonl`),
+never `git add -A` or `commit -a`, so nothing another agent left staged or
+modified in the checkout ends up in this commit.
 Don't push. This is the one git write the skill makes; approving the
 breakdown is the authority for it, so don't ask again.
 

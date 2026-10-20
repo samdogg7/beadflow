@@ -10,7 +10,7 @@ A design-to-code loop for projects that track work in [beads](https://github.com
 /beadflow:next      what's waiting on you, then straight into build or ideate (`show` to only report)
       │
       ▼
-/beadflow:ideate    interview → confirmed design → epic + child tasks in bd → decisions log
+/beadflow:ideate    interview → confirmed design → epic + child tasks in bd → decisions log (`next` for the next ready stub)
       │
       ▼
 /beadflow:build     per bead: claim → fresh implementer in a worktree → verify → review → record decisions → close and land

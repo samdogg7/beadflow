@@ -37,7 +37,7 @@ Waiting on you
 
 Ready to ideate
   proj-3na.1  Sim library skeleton and seeded day loop  (docs/design/architecture.md)
-  → /ideate proj-3na.1
+  → /beadflow:ideate next
 
 Ready to build
   proj-3na.1.2  Add seeded PRNG stream per system
@@ -64,7 +64,8 @@ take the first case that applies and say in one line which one:
 2. **A waiting question blocks a task.** Stop. Answering it
    (`bd human respond`) is what unblocks the next build.
 3. **Ready to ideate is non-empty.** Read `../ideate/SKILL.md` relative to
-   this skill's base directory and follow it with the stub's ID as the seed.
+   this skill's base directory and follow it with `next` as the seed, so it
+   claims the stub before another session can pick it.
    It's an interview, so it ends at the first question, not at a filed epic.
 4. **Nothing is ready.** Stop after the report.
 
