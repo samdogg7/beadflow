@@ -74,10 +74,13 @@ Search open beads for anything related to the idea (`bd search`, `bd list
 or conflict. Don't dwell on unrelated ones. Then list, in one line, the
 interview areas that apply, so the user can see how long it will run.
 
-When the seed is a stub, also read its siblings under the same parent. The
-most useful thing the interview can settle is where this epic stops and the
-next one starts; put that line in the summary so neither epic builds the
-other's half.
+When the seed is a stub, read its notes. Build appends a line there when
+it lands a seam this stub consumes; design against that shape, and if the
+design needs it changed, make the change a child task.
+
+Also read the stub's siblings under the same parent. The most useful thing
+the interview can settle is where this epic stops and the next one starts;
+put that line in the summary so neither epic builds the other's half.
 
 ### 2. Interview
 
@@ -135,7 +138,10 @@ approves. "Looks good" counts; silence or a new question doesn't.
 
 ### 5. File it
 
-1. Check `bd create --help` and `bd dep --help`.
+1. Check `bd create --help` and `bd dep --help`. If the seed is a stub,
+   re-read its notes: build may have landed a seam it consumes during the
+   interview. If one changes the breakdown, show the user the revised
+   breakdown before filing.
 2. Create the epic, or update the stub, so its description is the confirmed
    design summary. A new epic gets a readable ID: `--id <prefix>-<slug>` with
    a two- or three-word slug (`proj-stamina-sprint`), if bd supports

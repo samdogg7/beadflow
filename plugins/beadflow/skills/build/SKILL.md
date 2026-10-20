@@ -65,6 +65,27 @@ If the project keeps an architecture doc, it may name the seams known so
 far; treat those as examples, not the definition. When unsure, treat it as a seam: a wrong skip
 ships a bug into something others build on; a wrong review costs tokens.
 
+For seam work, also look for undesigned consumers: `bd list
+--label=needs-ideation --status open,in_progress`, then `bd show` each
+stub. In-progress counts: `/ideate next` claims its stub, and that's
+the one most likely being designed while this builds. A stub
+consumes the seam when its description, or the section of its design file
+it builds from, names the type, format, or signal this bead adds or
+changes. A shared design file alone isn't a match; one doc often covers
+several epics. For each consumer:
+
+- put it in the brief (the template's consumers line), so the implementer
+  neither builds for it nor picks a shape that rules out what that section
+  describes
+- if the bead's acceptance criteria and that section contradict each other,
+  it's an open question (step 5), not a call to make in the brief
+- in step 7, note the landed shape on the stub, so `/ideate` designs
+  against the code that exists rather than the doc's guess
+
+Build doesn't wait for the stub to be ideated. Building first is the
+default; this check only makes sure the seam doesn't close off the next
+epic by accident.
+
 Seam work gets Opus and a code review. Everything else gets Sonnet, and
 tests plus the acceptance check are the review. `/ideate` writes beads with
 contracts and checkable acceptance, which is the spec Sonnet executes well,
@@ -90,6 +111,10 @@ Epic <parent-id> description:
 
 Design doc for this system: <path>. Read it before you start. Read
 CLAUDE.md for conventions. Read code only as the task needs.
+
+Not yet designed, but will build on what this task exposes: <stub id,
+design file and section, per consumer; omit if none>. Don't build for them.
+Don't pick a shape that rules out what those sections describe.
 
 Project conventions (every line holds; reviews caught each one twice):
 <the Conventions & Patterns section of CLAUDE.md, verbatim; omit if empty>
@@ -170,6 +195,7 @@ One commit per bead, carrying the code and the closed bead together:
 ```bash
 bd close <id> --suggest-next
 bd update <epic-id> --append-notes "<id>: <subject>; <test result>; review: <finding kinds>; proposed: <line>"
+bd update <stub-id> --append-notes "<id> landed <seam>: <its shape, one line>"   # per consumer from step 2
 bd export -o <worktree>/.beads/issues.jsonl
 git -C <worktree> add -A && git -C <worktree> commit -m "<subject>
 
