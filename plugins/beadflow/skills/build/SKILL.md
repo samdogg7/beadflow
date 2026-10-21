@@ -15,8 +15,11 @@ Target: $ARGUMENTS
 
 `next` means the first task in `bd ready --exclude-type=epic`. An epic ID
 means its open children in dependency order, pausing after each with a
-three-line report unless `--all` is given. Skip children that `bd blocked`
-lists; name them in the final report. `all` means the parent epic of
+three-line report unless `--all` is given. Pick each child from `bd ready
+--parent <epic-id> --exclude-type=epic` just before starting it, not from a
+list made at the start: `/beadflow:answer` can unblock a child or add a fix
+task while the run is going. Skip children that `bd blocked` lists; name
+them in the final report. `all` means the parent epic of
 that first ready task, run with `--all`: the whole next epic, no pauses.
 Name the epic and its open child count before starting, since the user may
 be on a phone and won't see progress until the end.
@@ -43,6 +46,8 @@ bd show <parent-epic-id>
 Read only the bead, its epic, and the design file the epic names. Not the
 codebase. Write the brief from those; the implementer reads code itself. The
 epic's notes hold what earlier beads landed and the decisions they proposed.
+If the bead was blocked on a human question, put the reply from its
+`bd show` in the brief verbatim; it's part of the spec.
 
 If writing the brief forces a design call the bead and docs don't settle,
 make it only if it's cheap to reverse, put it in the brief, and record it in
@@ -170,9 +175,24 @@ stays short enough to brief in full.
 
 ### 5. Open questions
 
-If the report has an open question, file it as a human bead per CLAUDE.md,
-block the task on it, leave the worktree in place, and stop. Report the
-question to the user in one paragraph. Don't pick an answer.
+If the report has an open question, file it as a human bead per CLAUDE.md
+and block the task on it. Don't pick an answer. Post the question to the
+user in one paragraph, saying they can reply with `/beadflow:answer` from
+any session. Then park the bead: its implementer and worktree stay as they
+are.
+
+A single bead stops here. An epic run carries on with the next ready child.
+Before each child, `bd show` the question on every parked bead. Once one is
+closed, send its reply to the parked implementer with `SendMessage` and
+resume that bead at step 4. The implementer still holds its worktree and
+the code it read.
+
+When no child is ready and beads are still parked, stop and list their
+questions. Release each parked bead (`bd update <id> --status=open` with
+the assignee cleared) and remove its worktree and branch. The next build
+starts it fresh, with the reply in the brief. Little is lost, since the
+implementer stopped at the question, and a worktree left behind has no
+implementer to resume it.
 
 ### 6. Record decisions
 

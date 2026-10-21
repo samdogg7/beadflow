@@ -61,8 +61,10 @@ take the first case that applies and say in one line which one:
    tasks with no epic count as one batch. Invoking `next` is the user's
    authority for everything that skill does. Waiting questions don't hold
    this up: a task they block isn't ready, and build skips it.
-2. **A waiting question blocks a task.** Stop. Answering it
-   (`bd human respond`) is what unblocks the next build.
+2. **A waiting question blocks a task.** Read `../answer/SKILL.md`
+   relative to this skill's base directory and follow it. Answering is
+   what unblocks the next build. When it finishes, take the first case that
+   applies again.
 3. **Ready to ideate is non-empty.** Read `../ideate/SKILL.md` relative to
    this skill's base directory and follow it with `next` as the seed, so it
    claims the stub before another session can pick it.
@@ -70,6 +72,6 @@ take the first case that applies and say in one line which one:
 4. **Nothing is ready.** Stop after the report.
 
 Build before ideate, because ready tasks mean an epic is already half built
-and finishing it unblocks more than a new design does. The sibling skills
+and finishing it unblocks more than a new design does. Build and ideate
 carry `disable-model-invocation`, which is why they're read and followed
 here rather than invoked.

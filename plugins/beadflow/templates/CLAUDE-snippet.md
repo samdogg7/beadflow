@@ -13,9 +13,9 @@ other work: `bd dep add <task-id> <question-id>`. If the task can land with
 your pick and the user can overturn it later, add no dependency and say in
 the description what the code does now.
 
-The user reviews these with `/beadflow:next` (`bd human list`), often from a
-phone, and answers with `bd human respond`. `next` stops for a question only
-when it blocks a task.
+The user reviews these with `/beadflow:next` and answers them with
+`/beadflow:answer`, often from a phone and while a build runs. `next` stops
+for a question only when it blocks a task.
 
 ## Commits
 

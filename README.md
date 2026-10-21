@@ -1,7 +1,7 @@
 # beadflow
 
 A design-to-code loop for projects that track work in [beads](https://github.com/gastownhall/beads)
-(`bd`). Four skills, one coordinator, fresh implementers.
+(`bd`). Five skills, one coordinator, fresh implementers.
 
 ```
 /beadflow:setup     once: Build & Test commands, design doc split, roadmap stubs
@@ -14,6 +14,8 @@ A design-to-code loop for projects that track work in [beads](https://github.com
       │
       ▼
 /beadflow:build     per bead: claim → fresh implementer in a worktree → verify → review → record decisions → close and land
+
+/beadflow:answer    any time: the questions agents filed for you, one at a time; replies unblock tasks mid-build
 ```
 
 ## Why this shape
@@ -34,6 +36,8 @@ A design-to-code loop for projects that track work in [beads](https://github.com
 - **Humans decide.** A design question goes into a `human`-labelled bead. It
   blocks a task only when the task can't be done right without the answer.
   `/next` lists every question but stops only for one that blocks work.
+  `/answer` takes the replies, and a running build resumes the task each
+  one unblocks.
 - **Docs keep up with the build.** Design calls made during `/build` are
   proposed as `decisions.md` lines at the end of a run. Review findings that
   recur become one-line rules in `CLAUDE.md` that every brief carries.
@@ -70,6 +74,32 @@ It proposes the Build & Test commands from what the repo contains, splits
 your design document into `docs/design/<system>.md` files, files the first
 milestone's roadmap stubs as epics, and commits. Each step is shown before it's
 written. After that, `/beadflow:next`.
+
+## Answering questions mid-build
+
+When an implementer hits a design call the bead and docs don't settle,
+build files it as a `human` bead, blocks that task, and moves on to the
+next ready one. Answer from a second session or your phone:
+
+```
+/beadflow:answer            every open question, blocking ones first
+/beadflow:answer proj-3na.4 just that one
+```
+
+Each question comes with its context, lettered options, and the agent's
+pick, so a letter or "yes" settles it. The reply closes the question; the
+running build sees that before its next bead and resumes the parked task
+with the reply. If you overturn a call that's already in the code, answer
+files a fix task under the same epic, and the build picks that up too.
+
+```
+build:  task .2 ── question ──▶ parked      task .3 ──▶ task .4 ──▶ resume .2
+                       │                                              ▲
+answer:                └──────────── you reply ───────────────────────┘
+```
+
+If the build runs out of ready tasks first, it stops and lists the open
+questions. Answer them, then run `/beadflow:next` again.
 
 ## Conventions the skills rely on
 
