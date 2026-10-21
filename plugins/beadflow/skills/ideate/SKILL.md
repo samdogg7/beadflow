@@ -57,6 +57,18 @@ These hold for the whole conversation, including after the epic is filed.
   choice and carry your default, so a one-word reply moves things on. Push back
   on vague or contradictory answers, and say so when an answer conflicts with an
   existing bead.
+- **Ask choices with `AskUserQuestion`.** One question per call: a short
+  topic as the header, your default first with "(Recommended)" on its
+  label, and a description per option saying what choosing it means. Its
+  picker works on a phone, and its built-in "Other" field takes typed
+  answers and pushback. It takes 2 to 4 options; a question without that
+  many real ones goes as a message instead of a padded picker. If the
+  tool isn't available, ask every question as a message.
+- **Approve with a picker too.** The design summary, the breakdown, and the
+  docs diff are too long for a picker, so post each as a message, then ask
+  with two options: "Approve" (Recommended) and "Revise". Revisions come
+  through "Other". "Approve", or a typed "looks good", counts as approval;
+  silence or a new question doesn't.
 - **Read the design doc, not the codebase.** If the project keeps design docs
   (CLAUDE.md says where), read the file for the system in question before the
   first question, and the decisions log if there is one. Don't skim code up
@@ -104,7 +116,8 @@ it works in the project's terms (which layer, which module), what's out of scope
 If you skipped persistence, say "No save data" in one line so the user can catch
 a wrong assumption.
 
-Get explicit agreement before breaking it down. This summary becomes the epic
+Get explicit agreement before breaking it down, with the approval picker.
+This summary becomes the epic
 description, so write it for a coding agent who has never seen this
 conversation.
 
@@ -134,7 +147,7 @@ time, say so in one line under the list, naming the shared file.
 
 Mark spikes (questions to answer, not code to write) and playtest or tuning tasks
 clearly. See `references/example-epic.md` for the shape. Revise until the user
-approves. "Looks good" counts; silence or a new question doesn't.
+approves through the approval picker.
 
 ### 5. File it
 
@@ -181,7 +194,8 @@ detail the bead's acceptance criteria already pin down, is not a decision.
 A decision usually fits one line; give it a detail file only when the
 interview weighed alternatives or produced evidence that a future agent would
 otherwise re-argue.
-Apply the edits only after the user approves, and only inside the design docs
+Apply the edits only after the user approves through the approval picker,
+and only inside the design docs
 directory. Re-read the decisions log just before writing and renumber your
 entries if it gained any since you proposed them; `/build` appends to the
 same log and may have landed lines during the interview. Don't rewrite the

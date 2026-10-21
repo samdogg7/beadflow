@@ -24,8 +24,9 @@ A design-to-code loop for projects that track work in [beads](https://github.com
   numbered, append-only `decisions.md`. Beads carry tasks for the next milestone
   or two with checkable acceptance criteria. `templates/design-README.md` is
   the convention.
-- **One question at a time.** `/ideate` interviews with a default on every
-  question, so a one-word reply from a phone moves it on.
+- **One question at a time.** `/ideate` and `/answer` ask through a
+  multiple-choice picker with a recommended default, so one tap from a
+  phone moves things on, and "Other" takes a typed answer.
 - **Thin coordinator, fresh implementer.** `/build` never edits code. It
   writes a self-contained brief, spawns an implementer in its own worktree,
   verifies by running the build and tests itself, and lands the commit with a
@@ -87,9 +88,9 @@ next ready one. Answer from a second session or your phone:
 ```
 
 Each question comes up as a multiple-choice picker with the agent's pick
-first, so one tap settles it; "Other" takes a typed answer. The reply closes the question; the
-running build sees that before its next bead and resumes the parked task
-with the reply. If you overturn a call that's already in the code, answer
+first, so one tap settles it; "Other" takes a typed answer. The reply
+closes the question; the running build sees that before its next bead and
+resumes the parked task with the reply. If you overturn a call that's already in the code, answer
 files a fix task under the same epic, and the build picks that up too.
 
 ```

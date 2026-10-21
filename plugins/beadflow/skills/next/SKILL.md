@@ -68,7 +68,8 @@ take the first case that applies and say in one line which one:
 3. **Ready to ideate is non-empty.** Read `../ideate/SKILL.md` relative to
    this skill's base directory and follow it with `next` as the seed, so it
    claims the stub before another session can pick it.
-   It's an interview, so it ends at the first question, not at a filed epic.
+   It's an interview, so it waits on the user at each question rather than
+   running through to a filed epic.
 4. **Nothing is ready.** Stop after the report.
 
 Build before ideate, because ready tasks mean an epic is already half built

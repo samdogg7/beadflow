@@ -1,6 +1,6 @@
 # Interview checklist
 
-Work through these in order, one or two questions at a time. Areas marked
+Work through these in order, one question at a time. Areas marked
 **Always** apply to every idea, even a small tweak. The rest have a "Skip when"
 test; skip the area when the test holds. The bullets are prompts for you, not a
 script to read out.
