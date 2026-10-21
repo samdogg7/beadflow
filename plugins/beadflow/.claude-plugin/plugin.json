@@ -1,6 +1,6 @@
 {
   "name": "beadflow",
   "description": "A design-to-code loop on beads (bd): /next shows what's waiting and continues into build or ideate, /ideate turns an idea into a reviewed epic through an interview, /build hands each bead to a fresh implementer in a worktree and lands it, /answer takes your replies to the questions agents filed, mid-build if need be.",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": { "name": "samdogg7" }
 }

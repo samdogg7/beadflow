@@ -40,27 +40,41 @@ how many there are and how many block work.
 
 ## 2. Ask
 
-One question per message:
+One question per `AskUserQuestion` call, so each reply is recorded before
+the next question. Its picker works on a phone, and its built-in "Other"
+field takes a typed answer.
 
 ```
-proj-3na.4 · blocks proj-3na.2.3 (Add mood decay)
-Should mood use a fixed 0-100 scale or named bands?
-
-Decay needs a number to subtract from; the design doc names bands
-(content, uneasy, angry) but no scale under them.
-
-  a) 0-100 integer, bands as thresholds   ← agent's pick
-  b) bands only, decay steps between them
+AskUserQuestion
+  header:   "Mood scale"
+  question: "Should mood use a fixed 0-100 scale or named bands?
+             (proj-3na.4, blocks proj-3na.2.3 Add mood decay)"
+  options:
+    - label: "0-100, bands as thresholds (Recommended)"
+      description: "Decay subtracts from an integer; bands are ranges on it."
+    - label: "Bands only"
+      description: "Decay steps between content, uneasy, angry; no number."
 ```
 
-For a question that blocks nothing, replace the "blocks" part with what
-the code does now: `in code: a` and the task that landed it.
+- **Question:** the bead's question, then its ID and what it blocks. For a
+  question that blocks nothing, name what the code does now instead
+  (`in code: 0-100, from proj-3na.2.1`).
+- **Options:** the options from the bead, the agent's pick first with
+  "(Recommended)" on its label. Labels stay short; each description says
+  what choosing it means in practice. The picker takes 2 to 4 options. If
+  the bead has more, offer the four likeliest and name the rest in the
+  question. If it offers only one, add the obvious alternative, so the
+  picker has two.
+- **Context:** if the choice needs more than the descriptions carry, send
+  the two or three lines that bear on it as a message just before the call.
+  The bead holds the rest.
+- **Typed replies:** "Other" is where free text, "skip", and "dismiss"
+  go. "skip" leaves the question open; "dismiss" means it no longer applies.
 
-Keep the context to the two or three lines that bear on the choice; the
-bead holds the rest. Take a letter, "yes" for the agent's pick, or free
-text. If a reply is ambiguous or contradicts an earlier answer, say so and
-ask again. "skip" leaves the question open; "dismiss" means it no longer
-applies.
+If a reply is ambiguous or contradicts an earlier answer, say so and ask
+again. If `AskUserQuestion` isn't available in this session, ask the same
+thing as a message with lettered options and take a letter, "yes" for the
+recommended option, or free text.
 
 ## 3. Record
 

@@ -86,8 +86,8 @@ next ready one. Answer from a second session or your phone:
 /beadflow:answer proj-3na.4 just that one
 ```
 
-Each question comes with its context, lettered options, and the agent's
-pick, so a letter or "yes" settles it. The reply closes the question; the
+Each question comes up as a multiple-choice picker with the agent's pick
+first, so one tap settles it; "Other" takes a typed answer. The reply closes the question; the
 running build sees that before its next bead and resumes the parked task
 with the reply. If you overturn a call that's already in the code, answer
 files a fix task under the same epic, and the build picks that up too.
