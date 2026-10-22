@@ -105,7 +105,11 @@ questions. Answer them, then run `/beadflow:next` again.
 ## Conventions the skills rely on
 
 - `bd` with `human`-labelled decision beads, `needs-ideation` on stubs,
-  `--acceptance` on tasks, readable epic IDs via `--id`.
+  acceptance criteria in their own field, the design file in `spec_id`, and
+  readable epic IDs with children numbered under them. Ideate files an
+  epic as one atomic `bd create --graph` plan.
+- Claims carry a lease. Build and ideate renew it with `bd heartbeat`, and
+  `/next` runs `bd reclaim` so a crashed session's claims reopen.
 - Commits carry `Bead: <id>`, one bead per commit. The commit also carries
   the closed bead in `.beads/issues.jsonl`, and the epic's notes get a line
   per bead landed.
@@ -114,6 +118,33 @@ questions. Answer them, then run `/beadflow:next` again.
 - A Build & Test section in `CLAUDE.md` with exact commands, and a
   Conventions & Patterns section that `/build` fills from repeated review
   findings.
+
+## Evals
+
+`plugins/beadflow/evals/` holds one case per skill. Each case's scaffold
+builds a scratch git repo with bd, runs the skill, and grades the bd and
+git state it leaves:
+
+| Case | Checks |
+| :- | :- |
+| `next-show` | flags an unmerged build and a blocking question, reclaims, writes nothing else |
+| `ideate-files-epic` | one `--graph` plan: pinned child IDs, acceptance field, spike type, dependencies, stub released |
+| `answer-overturn` | both replies recorded; an overturn reopens the closed epic and files a fix task |
+| `build-closes-epic` | implementer in a worktree, `Bead:` trailer, merged, worktree removed, epic closed |
+
+```bash
+cd plugins/beadflow
+claude plugin eval . --scaffold --allow-tools Bash Write Edit \
+  --disallow-tools AskUserQuestion --ablation none --runs 1
+```
+
+The skills are interactive and an eval run has no user, so each prompt
+gives every reply up front and the picker is disabled. `--scaffold` runs
+the cases' setup scripts as you; bd and git must be on your PATH. Run the
+suite after upgrading bd: most of what it catches is bd flags and output
+formats changing under the skills. `build-closes-epic` spawns an
+implementer and costs the most; when iterating on one skill, run its case
+alone with `--case <name>`.
 
 ## Metrics
 

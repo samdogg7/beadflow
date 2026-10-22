@@ -1,0 +1,12 @@
+schema_version: "1.1"
+name: next-show
+description: >
+  next show reports an unmerged build and a blocking question, reclaims
+  stale claims, and changes nothing else.
+tags: [next, cheap]
+runs: 1
+execution:
+  max_turns: 25
+  timeout_seconds: 300
+context:
+  scaffold_script: scaffold.sh

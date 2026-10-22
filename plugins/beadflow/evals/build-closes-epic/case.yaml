@@ -1,0 +1,16 @@
+schema_version: "1.1"
+name: build-closes-epic
+description: >
+  build lands its only child through an implementer in a worktree, commits
+  with a Bead trailer, merges, cleans up, and closes the epic.
+tags: [build, expensive]
+runs: 1
+execution:
+  max_turns: 80
+  timeout_seconds: 1500
+  append_system_prompt: >
+    After the skill has finished, run these in the project root:
+    `bd export -o state.jsonl`, `git log --format=%B main > gitlog.txt`,
+    and `git worktree list > worktrees.txt`.
+context:
+  scaffold_script: scaffold.sh

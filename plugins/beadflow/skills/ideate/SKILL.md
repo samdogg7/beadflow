@@ -25,8 +25,8 @@ If no stub is ready, list the open stubs with what blocks each one and stop.
 Don't ideate a blocked stub: its design rests on work that hasn't landed.
 
 If the seed is a bead ID, it's a stub epic filed from the roadmap. Run
-`bd show <id>`, read the design file it links, and run the interview on that
-scope. Before step 1, tell the user what they're designing: the epic's title
+`bd show <id>`, read the design file on its `Spec:` line (older stubs name
+it in the description), and run the interview on that scope. Before step 1, tell the user what they're designing: the epic's title
 and ID, then one or two plain sentences on what it builds, drawn from the
 stub and the design file. The user may have picked it with `next` and not
 know which stub came up. In step 5, fill that epic (update its description
@@ -46,8 +46,14 @@ These hold for the whole conversation, including after the epic is filed.
 - **bd is the only thing you change**, and only after the user approves the
   breakdown in chat. Searching and listing beads is fine at any point. The
   one exception is the claim on a stub picked by `next`. If the user drops
-  the interview, release it (`bd update <id> --status=open` with the assignee
-  cleared) so the stub is pickable again.
+  the interview, release it with `bd unclaim <id>` so the stub is pickable
+  again.
+- **Keep the claim alive.** A claim's lease lapses 5 minutes after the last
+  `bd heartbeat`, and `/beadflow:next` reopens claims whose lease lapsed
+  more than 2 hours ago. While you hold the claim, run `bd heartbeat <id>`
+  each time the user replies; stop once step 5 releases it. If it fails, the stub was reopened while the user was away:
+  claim it again. If that fails too, another session is designing it; tell
+  the user and stop.
 - **Don't run `bd prime` if beads context is already in the session.** Hooks
   usually inject it. Run it only if you can't see bd workflow context.
 - **Don't assume bd flags.** Run `bd create --help` and `bd dep --help` before
@@ -155,28 +161,57 @@ approves through the approval picker.
    re-read its notes: build may have landed a seam it consumes during the
    interview. If one changes the breakdown, show the user the revised
    breakdown before filing.
-2. Create the epic, or update the stub, so its description is the confirmed
-   design summary. A new epic gets a readable ID: `--id <prefix>-<slug>` with
-   a two- or three-word slug (`proj-stamina-sprint`), if bd supports
-   `--id`. Children then auto-number under it (`proj-stamina-sprint.1`), which
-   reads better in commit trailers and `bd ready` than a hash suffix. Renaming
-   later doesn't carry children, so settle the slug before this step.
-3. Create each child with the epic as parent. Put acceptance criteria in the
-   acceptance field if bd has one (`--acceptance`), not in the description, so
-   `bd show` and validation can find them.
-4. Add dependencies between children to set the order.
-5. If the stub was claimed by `next`, set it back to `open` and clear the
-   assignee. It's an epic now, not work in progress, and `/beadflow:next`
-   would otherwise list it as in progress until it closes.
-6. Show the created IDs mapped to titles, then run `bd ready`.
+2. Write the epic and its children as one graph plan, a JSON file in a
+   temp directory outside the project (from `mktemp -d`):
 
-Pass multi-line descriptions through stdin or a temp file outside the project
-(for example from `mktemp`), not as long inline strings. Inline strings break on
-quotes and newlines, and a temp file inside the repo would violate the read-only
-rule.
+   ```json
+   {"nodes": [
+     {"key": "epic", "id": "proj-stamina-sprint", "type": "epic",
+      "title": "Stamina-limited sprint", "description": "<step 3 summary>",
+      "spec_id": "docs/design/player.md"},
+     {"key": "meter", "id": "proj-stamina-sprint.1", "parent_key": "epic",
+      "type": "task", "priority": 2, "title": "Add Stamina node with drain and regen",
+      "acceptance_criteria": "<one criterion per line>"},
+     {"key": "gate", "id": "proj-stamina-sprint.2", "parent_key": "epic",
+      "type": "task", "priority": 2, "title": "Gate sprint on stamina",
+      "acceptance_criteria": "<...>"}
+   ],
+   "edges": [{"from_key": "gate", "to_key": "meter"}]}
+   ```
 
-If a command fails partway, stop and report what was created so far. Don't retry
-blindly; a retry can file duplicates.
+   - **IDs:** pin every `id`. The epic gets a readable slug
+     (`<prefix>-<slug>`, two or three words), and children number under it
+     (`<epic-id>.1`), which reads better in commit trailers and `bd ready`
+     than a hash. A plan without pinned IDs gives children flat hash IDs.
+     Renaming later doesn't carry children, so settle the slug first.
+   - **Fields:** `spec_id` is the design file, so build and next read it
+     from a field instead of from prose. Acceptance criteria go in
+     `acceptance_criteria`, not the description, so `bd show` and
+     validation can find them. Spikes get `"type": "spike"`.
+   - **Edges:** `from_key` waits on `to_key`. Parent links come from
+     `parent_key`; don't repeat them as edges.
+   - **Stubs:** leave out the epic node. Children use
+     `"parent_id": "<stub-id>"` and pinned IDs `<stub-id>.1`, `<stub-id>.2`;
+     without a pinned `id` they get hash IDs, parent or not.
+3. Run `bd create --graph <file> --dry-run`, then without `--dry-run`. The
+   plan files atomically: if it fails, nothing was created, so fix the plan
+   and run it again.
+4. For a stub, after the children are filed: set its description to the
+   step 3 summary (`bd update <id> --body-file <file> --spec-id <design file>
+   --remove-label needs-ideation`), then release the claim from `next` with
+   `bd unclaim <id>`. It's an epic now, not work in progress, and
+   `/beadflow:next` would otherwise list it as in progress until it closes.
+5. Show the created IDs mapped to titles, then run `bd ready`.
+
+If `bd create --help` has no `--graph`, file one bead at a time instead:
+the epic with `--id` and `--spec-id`, then each child with `--parent`,
+`--no-inherit-labels`, and `--acceptance`, then `bd dep add`. Leave `--id`
+off the children; bd rejects it with `--parent`, and children number under
+the epic on their own. Without `--no-inherit-labels`, children copy a
+stub's `needs-ideation` label and never show as ready. Pass multi-line text
+through a temp file outside the project, never inline. If a command fails
+partway, stop and report what was created so far; a blind retry can file
+duplicates.
 
 ### 6. Update the design docs
 

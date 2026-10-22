@@ -1,0 +1,16 @@
+schema_version: "1.1"
+name: ideate-files-epic
+description: >
+  ideate fills a stub with one graph plan: pinned child IDs, acceptance
+  criteria in their own field, a spike type, dependencies, and the stub
+  released and relabelled.
+tags: [ideate]
+runs: 1
+execution:
+  max_turns: 50
+  timeout_seconds: 900
+  append_system_prompt: >
+    After the skill has finished, run `bd export -o state.jsonl` in the
+    project root.
+context:
+  scaffold_script: scaffold.sh

@@ -1,0 +1,15 @@
+schema_version: "1.1"
+name: answer-overturn
+description: >
+  answer records both replies, and overturning a call already in a closed
+  epic's code reopens the epic and files a fix task under it.
+tags: [answer]
+runs: 1
+execution:
+  max_turns: 40
+  timeout_seconds: 600
+  append_system_prompt: >
+    After the skill has finished, run `bd export -o state.jsonl` in the
+    project root.
+context:
+  scaffold_script: scaffold.sh

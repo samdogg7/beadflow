@@ -40,9 +40,14 @@ how many there are and how many block work.
 
 ## 2. Ask
 
-One question per `AskUserQuestion` call, so each reply is recorded before
-the next question. Its picker works on a phone, and its built-in "Other"
-field takes a typed answer.
+Ask with `AskUserQuestion`. Its picker works on a phone, and its built-in
+"Other" field takes a typed answer.
+
+- **Blocking questions:** one per call, recorded before the next. Each
+  reply can let a parked build resume, so it shouldn't wait on the rest.
+- **Questions that block nothing:** up to four per call, since the picker
+  takes four. The code already runs each agent's pick, so nothing waits on
+  them, and a batch saves the user round trips.
 
 ```
 AskUserQuestion
@@ -89,8 +94,12 @@ option in full, not a letter, plus any condition the user added.
 When the question blocked nothing and the reply overturns what the code
 does now, the code is wrong until someone changes it. File a task for that
 under the same epic as the task that made the call, with acceptance
-criteria for the new behavior. Check `bd create --help` first. A build
-running that epic picks it up between beads.
+criteria for the new behavior. Check `bd create --help` first. If the epic
+is closed, `bd reopen` it after filing: build closes an epic with its last
+child, and a closed epic with an open child drops out of `/beadflow:next`.
+Filing first means the epic is never open with no work left in it. Build
+closes it again once the fix lands. A build running that epic picks
+the task up between beads.
 
 ## 4. Report
 

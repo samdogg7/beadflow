@@ -58,8 +58,8 @@ Skip if any open epic carries the `needs-ideation` label.
 From `roadmap.md` (or the interview), propose the first milestone's epics: a
 two- or three-word slug, a title, and the design file each builds from.
 Milestones beyond the next stay as lines in `roadmap.md`. After approval, file
-each as `bd create --id <prefix>-<slug> --type=epic --labels=needs-ideation`
-with a one-line description naming the design file, and a milestone epic as the
+each as `bd create --id <prefix>-<slug> --type=epic --labels=needs-ideation
+--spec-id <design file>` with a one-line description of its scope, and a milestone epic as the
 parent if the roadmap has milestones. Add dependencies between stubs only where
 one plainly can't start before another.
 

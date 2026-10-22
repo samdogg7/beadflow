@@ -43,8 +43,16 @@ bd show <id>
 bd show <parent-epic-id>
 ```
 
-Read only the bead, its epic, and the design file the epic names. Not the
-codebase. Write the brief from those; the implementer reads code itself. The
+The claim carries a lease that lapses 5 minutes after the last heartbeat,
+and `/beadflow:next` in another session reopens claims whose lease lapsed
+more than 2 hours ago. Run `bd heartbeat <id>` at the start of steps 2
+through 7, and for each parked bead (step 5) before each child. Step 7
+closes the bead, and heartbeat fails on a closed bead, so stop there. If a heartbeat
+fails, the bead was reopened and another session may have it: stop work on
+it, remove its worktree, and name it in the report. Don't land it.
+
+Read only the bead, its epic, and the design file on the epic's `Spec:`
+line (older epics name it in the description). Not the codebase. Write the brief from those; the implementer reads code itself. The
 epic's notes hold what earlier beads landed and the decisions they proposed.
 If the bead was blocked on a human question, put the reply from its
 `bd show` in the brief verbatim; it's part of the spec.
@@ -188,8 +196,8 @@ resume that bead at step 4. The implementer still holds its worktree and
 the code it read.
 
 When no child is ready and beads are still parked, stop and list their
-questions. Release each parked bead (`bd update <id> --status=open` with
-the assignee cleared) and remove its worktree and branch. The next build
+questions. Release each parked bead with `bd unclaim <id>` and remove its
+worktree and branch. The next build
 starts it fresh, with the reply in the brief. Little is lost, since the
 implementer stopped at the question, and a worktree left behind has no
 implementer to resume it.
@@ -214,6 +222,7 @@ One commit per bead, carrying the code and the closed bead together:
 
 ```bash
 bd close <id> --suggest-next
+bd close <epic-id>       # only if bd show <epic-id> lists every child closed
 bd update <epic-id> --append-notes "<id>: <subject>; <test result>; review: <finding kinds>; proposed: <line>"
 bd update <stub-id> --append-notes "<id> landed <seam>: <its shape, one line>"   # per consumer from step 2
 bd export -o <worktree>/.beads/issues.jsonl
@@ -236,7 +245,12 @@ in between: re-export into the worktree and amend before merging.
 If the fast-forward fails because main moved, rebase the branch and re-run
 the tests before merging; on a conflict in `issues.jsonl`, take a fresh
 export rather than merging the lines. Don't force anything. If the bead
-can't land, `bd reopen <id>`.
+can't land, `bd reopen <id>`, and reopen the epic too if this step closed
+it.
+
+Close the epic by ID, not with `bd epic close-eligible`. That closes every
+finished epic in the repo, including one `/beadflow:answer` just reopened
+to file a fix under.
 
 ### 8. Report
 

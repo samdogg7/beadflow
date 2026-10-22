@@ -7,30 +7,48 @@ argument-hint: [show]
 # Next
 
 Answer "what should I do now?" in one screen, then do it unless a human has
-to decide first. The report step is read-only: run only `bd` list and show
-commands, never create, update, or close anything, and don't touch project
-files. The user may be on a phone, so keep it short and skip anything empty.
+to decide first. The report step is read-only apart from step 0: run only
+`bd` list and show commands and the git reads in step 5, never create,
+update, or close anything, and don't touch project files. The user may be on a phone, so keep it short and skip anything empty.
 
 Argument: `show` prints the report and stops. With no argument, the report is
 followed by the handoff in "Then continue".
 
 Run these, in this order:
 
+0. `bd reclaim --older-than 2h` — reopens beads whose session died holding
+   the claim. Build and ideate heartbeat their claims, but only between
+   steps, and one implementer run can take most of an hour; 2 hours leaves
+   room for that. If it reopened anything, name each bead in one line
+   above the report.
 1. `bd human list` — questions agents couldn't answer. If any, `bd blocked`
    shows which tasks each one blocks; a question it doesn't list blocks
    nothing.
 2. `bd list --label=needs-ideation --status=open` — roadmap stubs not yet
    designed. Pick the first one that `bd ready` also lists; that's the next
-   `/ideate` run. Show its ID, title, and the design file its description names.
+   `/ideate` run. Show its ID, title, and the design file on its `Spec:` line (older stubs
+   name it in the description).
 3. `bd ready --exclude-label=needs-ideation --exclude-type=epic` — tasks
    ready to build. Epics are containers, not work, so they're excluded.
 4. `bd list --status=in_progress` — what's already being worked.
+5. `git worktree list --porcelain`. The first entry is the main checkout,
+   and its branch is the base. For each other worktree on a branch (skip
+   detached ones), `git log --format=%B <base>..<branch> | grep '^Bead:'`.
+   A branch with a `Bead:` commit the base lacks is a build that died
+   between its commit and the merge. Its bead is closed, but the code
+   isn't on the base, and nothing in bd shows it. List it only if the
+   branch's tip commit is more than 2 hours old (`git log -1
+   --format=%cr <branch>`); a younger one may be a live build about to
+   merge.
 
 ## Output
 
-Four short sections, headings only for sections with content:
+Five short sections, headings only for sections with content:
 
 ```
+Not merged
+  proj-3na.1.3  Add mood decay  (branch worktree-agent-4f2c, 1 commit ahead)
+
 Waiting on you
   proj-3na.4  Should mood use a fixed 0-100 scale or named bands?  (blocks proj-3na.2.3)
   proj-3na.7  Should fog lift at dawn or stay until scouted?  (blocks nothing)
@@ -55,6 +73,11 @@ item from the roadmap doc, if the project keeps one.
 Skip this section when the argument is `show`. Otherwise, after the report,
 take the first case that applies and say in one line which one:
 
+0. **Not merged is non-empty.** Read `../build/SKILL.md` relative to this
+   skill's base directory and land each branch as its step 7 does from the
+   fast-forward on: rebase if main moved, re-run the tests, merge, remove
+   the worktree and branch. It's finished work sitting off main, so it
+   goes before anything new. Then take the first case that applies again.
 1. **Ready to build is non-empty.** Read `../build/SKILL.md` relative to this
    skill's base directory and follow it with the argument `all`: the parent
    epic of the first ready task, every open child, no pauses. Standalone
