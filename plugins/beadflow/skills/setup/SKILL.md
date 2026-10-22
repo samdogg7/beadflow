@@ -11,6 +11,21 @@ Turn a freshly installed project into one `/beadflow:next` can drive. Three
 steps, each proposed in chat and written only after approval. Ask one question
 at a time; the user may be on a phone.
 
+## Asking
+
+Ask with `AskUserQuestion`; its picker notifies the phone of a user who is
+away from the keyboard, and its built-in "Other" field takes typed answers.
+
+- **Approvals:** post the proposal as a message (it's too long for a
+  picker), then ask with "Approve" (Recommended) and "Revise". Revisions
+  come through "Other". Silence doesn't count as approval.
+- **Choices:** a short header, your default first with "(Recommended)" on its
+  label, and a description per option. The picker takes 2 to 4 options.
+- **Open-ended questions** (a path, a URL, a pasted document) go as a
+  message, since there are no options to pick from.
+
+If the tool isn't available, ask every question as a message.
+
 Design doc source: $ARGUMENTS
 
 ## Standing rules
@@ -37,8 +52,9 @@ Write it into the section `install.sh` left in `CLAUDE.md` after approval.
 Skip if `docs/design/` already holds more than `README.md` and
 `decisions.md`.
 
-Ask where the design lives if `$ARGUMENTS` is empty: a file, a URL, a pasted
-document, or nothing yet. With nothing, write `docs/design/overview.md` from a
+If `$ARGUMENTS` is empty, ask where the design lives with a picker: "File or URL",
+"Pasted document", or "Nothing yet". The first two follow with a message asking
+for the path or text. With nothing, write `docs/design/overview.md` from a
 short interview (what it is, three to five pillars, the first milestone) and
 stop this step.
 

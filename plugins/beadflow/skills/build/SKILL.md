@@ -255,15 +255,23 @@ to file a fix under.
 ### 8. Report
 
 Three lines: what landed (commit, files), what was verified (commands and
-results), what's next (`bd ready`). For an epic without `--all`, wait for the
-user before the next child.
+results), what's next (`bd ready`). For an epic without `--all`, ask whether
+to continue with the next child, using `AskUserQuestion` with "Continue"
+(Recommended) and "Stop here". The user may be away from the keyboard, and
+the picker notifies their phone.
 
 When the run ends, collect the `proposed:` lines from the epic's notes that
 `docs/design/decisions.md` doesn't hold yet, and show them as a diff to it,
-following its README. Apply and commit them on approval, subject "Record
-decisions from <epic>". Re-read the log just before writing and renumber
-your entries if it gained any since you proposed them; `/ideate` appends to
-the same log and may have landed lines during the run.
+following its README. The diff is too long for a picker, so post it as a
+message, then ask with `AskUserQuestion`: "Approve" (Recommended) and
+"Revise", with edits typed through "Other". On approval, apply and commit
+them with the subject "Record decisions from <epic>". Re-read the log just
+before writing and renumber your entries if it gained any since you proposed
+them; `/ideate` appends to the same log and may have landed lines during the
+run.
+
+If `AskUserQuestion` isn't available, ask the same thing as a message and
+wait for a reply.
 
 ## Fan-out
 
