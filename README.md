@@ -71,10 +71,18 @@ Then open Claude Code in the project and run:
 /beadflow:setup [path or URL of an existing design doc]
 ```
 
-It proposes the Build & Test commands from what the repo contains, splits
-your design document into `docs/design/<system>.md` files, files the first
+It proposes the Build & Test commands from what the repo contains, writes
+`docs/design/<system>.md` files from your design document, files the first
 milestone's roadmap stubs as epics, and commits. Each step is shown before it's
 written. After that, `/beadflow:next`.
+
+In a project with code already written, setup maps the systems from the code
+and checks the design document against it, so a dated document is fine. Each
+file gets a status line (`shipped`, `building`, or `design, not built`), and
+setup lists where the document and the code disagree. The code's version
+stands unless you pick the document's, which files it as an open question
+for `/beadflow:ideate`. No document at all works too; setup then asks what
+the next milestone is.
 
 ## Answering questions mid-build
 

@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Finishes setting up beadflow in a project after install.sh: proposes the Build & Test commands for CLAUDE.md from what the repo contains, splits an existing design document into docs/design/ files with status lines, and files roadmap stubs as readable-ID epics. Use once per project, right after installing the plugin, or when a project has the plugin but empty docs.
+description: Finishes setting up beadflow in a project after install.sh: proposes the Build & Test commands for CLAUDE.md from what the repo contains, writes docs/design/ files with status lines from an existing design document, the codebase, or both, and files roadmap stubs as readable-ID epics. Use once per project, right after installing the plugin, or when a project has the plugin but empty docs.
 disable-model-invocation: true
 argument-hint: [path or URL of an existing design doc, optional]
 ---
@@ -54,18 +54,65 @@ Skip if `docs/design/` already holds more than `README.md` and
 
 If `$ARGUMENTS` is empty, ask where the design lives with a picker: "File or URL",
 "Pasted document", or "Nothing yet". The first two follow with a message asking
-for the path or text. With nothing, write `docs/design/overview.md` from a
-short interview (what it is, three to five pillars, the first milestone) and
-stop this step.
+for the path or text.
 
-With a document: read it whole, then propose a split into one file per
-system, listing each file's name and the headings it takes. Keep the
-author's words; don't rewrite. Each file starts with
-`Status: design, not built.` Pull anything phrased as a settled decision
-with a reason into `decisions.md` as numbered lines dated today, and
-anything phrased as a question into its open-questions list. Add a
-`roadmap.md` if the document has a list of milestones. Show the
-file index for the README's table. Write after approval.
+Then take the path that fits. Step 1 already showed whether the repo holds
+source code beyond config and scaffolding.
+
+### No code, no document
+
+Write `docs/design/overview.md` from a short interview (what it is, three to
+five pillars, the first milestone) and stop this step.
+
+### No code, a document
+
+Read it whole, then propose a split into one file per system, listing each
+file's name and the headings it takes. Keep the author's words; don't
+rewrite. Each file starts with `Status: design, not built.` Pull anything
+phrased as a settled decision with a reason into `decisions.md` as numbered
+lines dated today, and anything phrased as a question into its
+open-questions list. Add a `roadmap.md` if the document has a list of
+milestones. Show the file index for the README's table. Write after
+approval.
+
+### Code, with or without a document
+
+The code is the record of what exists, so map it first. A document, if
+there is one, is checked against the map; it may be years behind.
+
+1. **Map the systems.** Read the directory layout, entry points, scene or
+   module boundaries, public interfaces, and test names. Don't read every
+   file; in a large repo, hand the sweep to an `Explore` agent and keep only
+   its map. A system is a part other code builds against or a player would
+   name: "combat", "save system", "world generation".
+2. **Place the document.** Read it whole and sort each section against the
+   map: *built* (the code does this), *drifted* (the code does it
+   differently), or *not built* (no code for it yet).
+3. **Propose the files**, one per system, each with its status line and the
+   code paths it covers:
+   - `Status: shipped.` for a built system. Following the README, the file
+     holds only what the code can't say: the contracts other systems rely
+     on, the decisions that explain why, and pointers to the code. Don't
+     describe what the code does.
+   - `Status: building.` for a system that's partly there. Shipped parts as
+     above; the unbuilt parts keep the document's words.
+   - `Status: design, not built.` for a section with no code. The
+     document's words, unchanged.
+4. **List the drift** in the proposal: one line per difference, doc's
+   version against the code's. The code's version stands by default. Each
+   one the user wants back the doc's way becomes an open question in
+   `decisions.md`, so `/ideate` takes it up.
+5. **Decisions.** From the document, settled decisions with a reason, as
+   above, unless the code overturned them. From the code, only choices that
+   clear the README's bar, such as the engine, the save format, or a
+   simulation model. Take the reason from a README, a comment, or a commit
+   message; with none, write `reason not recorded` so the user can supply
+   it at approval. Never invent a reason.
+6. **Roadmap.** Milestones from the document, dropping what's built. With no
+   document, or none left, ask what the next milestone is.
+
+Show the file index for the README's table and the drift list with the
+proposal. Write after approval.
 
 ## 3. Roadmap stubs
 
