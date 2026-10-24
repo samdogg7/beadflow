@@ -1,13 +1,14 @@
 # Example breakdown
 
 A mid-sized feature for a 2D platformer: a stamina meter that limits sprinting.
-This is the shape to post in chat at step 4, with the epic reduced to one line.
+This is the shape of the breakdown posted at the review in step 6, with the
+epic reduced to one line.
 Adapt the fields to the project; the content is illustrative.
 
 ## Epic: Stamina-limited sprint
 
 **Type:** epic · **Priority:** P2 · Description: the design summary confirmed
-in step 3 (below, for reference only; don't repost it at step 4).
+in step 3 (below, for reference only; don't repeat it in the breakdown).
 
 **Step 3 summary, which becomes the description:**
 

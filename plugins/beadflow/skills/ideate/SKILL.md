@@ -29,7 +29,7 @@ If the seed is a bead ID, it's a stub epic filed from the roadmap. Run
 it in the description), and run the interview on that scope. Before step 1, tell the user what they're designing: the epic's title
 and ID, then one or two plain sentences on what it builds, drawn from the
 stub and the design file. The user may have picked it with `next` and not
-know which stub came up. In step 5, fill that epic (update its description
+know which stub came up. In step 7, fill that epic (update its description
 to the confirmed design summary and drop its `needs-ideation` label) instead
 of creating a new one, and file the children under it. If the stub's ID is a hash suffix
 (`proj-3na.4`) and it has no children yet, rename it to a readable slug
@@ -40,18 +40,18 @@ references but not children, so it's only safe before any are filed.
 
 These hold for the whole conversation, including after the epic is filed.
 
-- **Read-only on the project**, except design docs in step 6 and the commit
-  in step 7. Don't create, edit, or delete any other project file. Another
+- **Read-only on the project**, except design docs and the commit in steps
+  7 and 8. Don't create, edit, or delete any other project file. Another
   agent may be working in this repo at the same time.
-- **bd is the only thing you change**, and only after the user approves the
-  breakdown in chat. Searching and listing beads is fine at any point. The
+- **bd is the only thing you change**, and only after the user approves at
+  the review in step 6. Searching and listing beads is fine at any point. The
   one exception is the claim on a stub picked by `next`. If the user drops
   the interview, release it with `bd unclaim <id>` so the stub is pickable
   again.
 - **Keep the claim alive.** A claim's lease lapses 5 minutes after the last
   `bd heartbeat`, and `/beadflow:next` reopens claims whose lease lapsed
   more than 2 hours ago. While you hold the claim, run `bd heartbeat <id>`
-  each time the user replies; stop once step 5 releases it. If it fails, the stub was reopened while the user was away:
+  each time the user replies; stop once step 7 releases it. If it fails, the stub was reopened while the user was away:
   claim it again. If that fails too, another session is designing it; tell
   the user and stop.
 - **Don't run `bd prime` if beads context is already in the session.** Hooks
@@ -70,11 +70,12 @@ These hold for the whole conversation, including after the epic is filed.
   answers and pushback. It takes 2 to 4 options; a question without that
   many real ones goes as a message instead of a padded picker. If the
   tool isn't available, ask every question as a message.
-- **Approve with a picker too.** The design summary, the breakdown, and the
-  docs diff are too long for a picker, so post each as a message, then ask
-  with two options: "Approve" (Recommended) and "Revise". Revisions come
-  through "Other". "Approve", or a typed "looks good", counts as approval;
-  silence or a new question doesn't.
+- **Approve once, with a picker.** The design summary, the breakdown, and
+  the docs diff go to the user together at the review in step 6, not one
+  at a time. They're too long for a picker, so post them as a message,
+  then ask with two options: "Approve" (Recommended) and "Revise".
+  Revisions come through "Other". "Approve", or a typed "looks good",
+  counts as approval; silence or a new question doesn't.
 - **Read the design doc, not the codebase.** If the project keeps design docs
   (CLAUDE.md says where), read the file for the system in question before the
   first question, and the decisions log if there is one. Don't skim code up
@@ -115,27 +116,25 @@ Prefer questions that force a choice ("Does dying drop the loot, or keep it?")
 over open ones ("Any thoughts on death?"). When the user says "whatever's
 standard", propose a concrete default and ask them to confirm it.
 
-### 3. Confirm the design
+### 3. Draft the design summary
 
 Summarize the design in a few short paragraphs: what the player experiences, how
 it works in the project's terms (which layer, which module), what's out of scope, and which decisions are still open.
 If you skipped persistence, say "No save data" in one line so the user can catch
 a wrong assumption.
 
-Get explicit agreement before breaking it down, with the approval picker.
-This summary becomes the epic
-description, so write it for a coding agent who has never seen this
-conversation.
+This summary becomes the epic description, so write it for a coding agent
+who has never seen this conversation. Don't post it yet; it goes to the
+user at the review in step 6.
 
 If the seed was a stub with a readable slug and the interview moved its scope
-so the slug no longer fits, propose a new slug in the same message and rename
-on approval (`bd rename <id> <prefix>-<slug>`). Do it here, before any children
-exist in step 5.
+so the slug no longer fits, propose a new slug with the summary and rename
+on approval (`bd rename <id> <prefix>-<slug>`), before any children exist.
 
-### 4. Propose the breakdown
+### 4. Draft the breakdown
 
-Post an editable list in chat: the epic as one line (title, type, priority;
-its description is the summary confirmed in step 3, so don't repeat it), then
+Write an editable list: the epic as one line (title, type, priority;
+its description is the summary from step 3, so don't repeat it), then
 each child task with
 
 - title, type, priority
@@ -152,15 +151,59 @@ dependency in the order they should land. When that makes tasks run one at a
 time, say so in one line under the list, naming the shared file.
 
 Mark spikes (questions to answer, not code to write) and playtest or tuning tasks
-clearly. See `references/example-epic.md` for the shape. Revise until the user
-approves through the approval picker.
+clearly. See `references/example-epic.md` for the shape.
 
-### 5. File it
+### 5. Draft the design doc changes
+
+Skip this step if the project has no design docs.
+
+The interview usually settles something the docs left open: a default
+overturned, an open question answered, a contract between systems pinned down.
+If that lands only in a bead, the doc is wrong the moment the bead closes.
+Draft the edits as a diff: a decision with its reasoning added to the
+decisions log, an open question removed, a status line changed. Follow the
+log's own conventions (the design docs README describes them). Be sparing: a
+decision earns a line only if an agent with the docs and the code in front of
+them might still do it differently. A contract the code makes obvious, or a
+detail the bead's acceptance criteria already pin down, is not a decision.
+A decision usually fits one line; give it a detail file only when the
+interview weighed alternatives or produced evidence that a future agent would
+otherwise re-argue.
+Edit only inside the design docs directory. Don't rewrite the design to
+match the epic; the epic already links to the doc.
+
+### 6. Review
+
+The user often skips some of these sections, so ask which to see. Use
+`AskUserQuestion` with `multiSelect: true`, header "Review", one option per
+drafted section:
+
+- "Design summary": the step 3 summary, and a slug rename if you proposed one
+- "Breakdown": the step 4 task list
+- "Docs changes": the step 5 diff. Leave this option out if step 5 was
+  skipped or found nothing to change.
+
+Then post every selected section in one message, under a heading each, and
+ask the approval picker once for all of it. A section the user didn't select
+is still part of what they approve; name the unshown ones in one line above
+the picker (`Not shown: docs changes (2 lines in decisions.md)`) so they
+know what they're approving blind. If they selected nothing, that line is
+the whole message.
+
+On "Revise", make the change and repost only the sections it touched, then
+ask the approval picker again. A design change often moves the breakdown;
+repost the breakdown too when it does, even if it wasn't selected. Don't ask
+the section picker again.
+
+Without `AskUserQuestion`, ask which sections to show as a message, or show
+all of them if the user's earlier replies already approve them.
+
+### 7. File it
 
 1. Check `bd create --help` and `bd dep --help`. If the seed is a stub,
    re-read its notes: build may have landed a seam it consumes during the
    interview. If one changes the breakdown, show the user the revised
-   breakdown before filing.
+   breakdown and ask the approval picker again before filing.
 2. Write the epic and its children as one graph plan, a JSON file in a
    temp directory outside the project (from `mktemp -d`):
 
@@ -213,38 +256,20 @@ through a temp file outside the project, never inline. If a command fails
 partway, stop and report what was created so far; a blind retry can file
 duplicates.
 
-### 6. Update the design docs
+Then apply the step 5 docs changes, if any. Re-read the decisions log just
+before writing and renumber your entries if it gained any since you drafted
+them; `/build` appends to the same log and may have landed lines during the
+interview.
 
-Skip this step if the project has no design docs.
-
-The interview usually settles something the docs left open: a default
-overturned, an open question answered, a contract between systems pinned down.
-If that lands only in a bead, the doc is wrong the moment the bead closes.
-Propose the edits as a diff: a decision with its reasoning added to the
-decisions log, an open question removed, a status line changed. Follow the
-log's own conventions (the design docs README describes them). Be sparing: a
-decision earns a line only if an agent with the docs and the code in front of
-them might still do it differently. A contract the code makes obvious, or a
-detail the bead's acceptance criteria already pin down, is not a decision.
-A decision usually fits one line; give it a detail file only when the
-interview weighed alternatives or produced evidence that a future agent would
-otherwise re-argue.
-Apply the edits only after the user approves through the approval picker,
-and only inside the design docs
-directory. Re-read the decisions log just before writing and renumber your
-entries if it gained any since you proposed them; `/build` appends to the
-same log and may have landed lines during the interview. Don't rewrite the
-design to match the epic; the epic already links to the doc.
-
-### 7. Commit
+### 8. Commit
 
 Once the docs are applied (or skipped), commit the design docs and the beads
 export together, trailer `Bead: <epic-id>`, subject "Ideate the <name> epic".
 Stage those paths by name (`git add <design-docs-dir> .beads/issues.jsonl`),
 never `git add -A` or `commit -a`, so nothing another agent left staged or
 modified in the checkout ends up in this commit.
-Don't push. This is the one git write the skill makes; approving the
-breakdown is the authority for it, so don't ask again.
+Don't push. This is the one git write the skill makes; the approval at the
+review is the authority for it, so don't ask again.
 
 ## Writing the beads
 
